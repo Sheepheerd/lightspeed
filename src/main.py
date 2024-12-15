@@ -1,87 +1,71 @@
+# main.py
 from fabric import Application
-from fabric.widgets.box import Box
-from fabric.widgets.label import Label
-from fabric.widgets.button import Button
-from fabric.widgets.datetime import DateTime
-from fabric.widgets.centerbox import CenterBox
-from fabric.widgets.wayland import WaylandWindow as Window
+from widgets.double_letter_button import DoubleLetterButton
+from widgets.overlay import Overlay
 from gi.repository import Gdk
-import pyautogui
+import time
+import subprocess
 
 
-def create_button():  # define a "factory function"
-    return Button(
-        label="Click Me",
-        size=500,
-        on_clicked=lambda b, *_: b.set_label("you clicked me"),
-    )
+first_key = None
+second_key = None
 
 
-class StatusBar(Window):
-    def __init__(self, **kwargs):
-        super().__init__(
-            layer="overlay",
-            anchor="center",
-            exclusivity="none",
-            keyboard_mode="exclusive",
-            **kwargs
-        )
-
-        self.date_time = DateTime()
-        self.children = CenterBox(
-            Box(
-                orientation="v",
-                children=[
-                    Label(label="Fabric Buttons Demo (Box 1)"),
-                    Box(
-                        orientation="h",
-                        children=[
-                            create_button(),
-                            create_button(),
-                            create_button(),
-                            create_button(),
-                        ],
-                    ),
-                ],
-            )
-        )
+def click():
+    time.sleep(0.1)  # Small delay before click
+    subprocess.run(["ydotool", "click", "0xC0"], check=True)
 
 
-def on_key_press(window, event, *_):  # key press event handler
-    if event.keyval == Gdk.KEY_a:  # Check if the "a" key is pressed
-        print("The 'a' key was pressed!")
-        pyautogui.moveTo(100, 100, duration=0.5)
-        # Change labels of all buttons to "You pressed 'a'"
-        for widget in window.get_children():
-            for button in widget.get_children():
-                if isinstance(button, Button):
-                    button.set_label("You pressed 'a'")
-    elif event.keyval == Gdk.KEY_b:
-        pyautogui.moveTo(100, 200, duration=0.5)
-    elif event.keyval == Gdk.KEY_Escape:
-        print("GoodBye")
+def move_mouse(x, y):
+    subprocess.run(["ydotool", "mousemove", "--absolute", str(x), str(y)], check=True)
+
+
+def on_key_press(window, event, *_):
+    global first_key, second_key  # Ensure we're using global variables
+
+    if event.keyval == Gdk.KEY_Escape:
+        print("Quitting")
         exit()
+
+    if first_key is None:
+        first_key = event.keyval
+        print(f"First key pressed: {chr(first_key)}")
+        return  # Exit to avoid handling second key in this function
+
+    if second_key is None:
+        second_key = event.keyval
+        print(f"Second key pressed: {chr(second_key)}")
+
+    if first_key is not None and second_key is not None:
+        label_to_match = chr(first_key) + chr(second_key)
+        print(f"Matching label: {label_to_match}")
+
+        widget = window.get_children()[0]  # This is the main container
+        box = widget.get_children()[0]  # This is where your grid of buttons is
+
+        for row_index, row in enumerate(box.get_children()):
+            # Iterate through each button in the current row
+            for col_index, double_letter_button in enumerate(row.get_children()):
+                if isinstance(double_letter_button, DoubleLetterButton):
+                    if double_letter_button.get_label() == label_to_match:
+                        print(
+                            f"Button found at row {row_index}, col {col_index} with label {label_to_match}"
+                        )
+                        move_mouse(double_letter_button.x, double_letter_button.y)
+                        print(double_letter_button.x, double_letter_button.y)
 
 
 if __name__ == "__main__":
 
-    # Create a window
-    window = StatusBar()
+    window = Overlay()
 
-    # Set the window to a specific size of 1920x1080
-    window.set_default_size(1920, 1080)
-
-    # Set window opacity
     window.set_opacity(0.5)
 
-    # Make the window float above other windows (keep it above)
     window.set_keep_above(True)
 
-    # Explicitly request focus (make sure this method is available)
     window.set_can_focus(True)
-    # Connect the key press event handler to the window
+
     window.connect("key-press-event", on_key_press)
 
-    # Run the application
     app = Application("default", window)
     app.run()
