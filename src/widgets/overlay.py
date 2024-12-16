@@ -3,13 +3,13 @@ from fabric.widgets.wayland import WaylandWindow as Window
 from widgets.double_letter_button import DoubleLetterButton
 
 
-def create_double_letter_buttons():
+def create_double_letter_buttons(horizontal_size, vertical_size):
     """Create a 26x26 grid of buttons with labels 'aa' to 'zz'."""
     buttons = []
 
     # calculate the button width and height for rectangular buttons
-    horizontal = (1920 // 26) + 1
-    vertical = (1080 // 26) - 1
+    horizontal = horizontal_size // 26 + 1
+    vertical = vertical_size // 26 + 1
 
     for i in range(26):
         for j in range(26):
@@ -31,16 +31,16 @@ def create_double_letter_buttons():
 
 
 class Overlay(Window):
-    def __init__(self, **kwargs):
+    def __init__(self, horizontal: int, verticle: int, **kwargs):
         super().__init__(
-            layer="overlay",
-            anchor="top",
-            exclusivity="none",
+            layer="top",
+            anchor="bottom",
+            # exclusivity="none",
             keyboard_mode="exclusive",
             **kwargs,
         )
 
-        button_grid = create_double_letter_buttons()
+        button_grid = create_double_letter_buttons(horizontal, verticle)
 
         self.children = Box(
             orientation="v",

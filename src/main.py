@@ -5,7 +5,7 @@ from widgets.overlay import Overlay
 from gi.repository import Gdk
 import time
 import subprocess
-
+import tkinter as tk
 
 first_key = None
 second_key = None
@@ -17,7 +17,7 @@ def click():
 
 
 def move_mouse(x, y):
-    subprocess.run(["ydotool", "mousemove", "--absolute", str(x), str(y)], check=True)
+    subprocess.run(["hyprctl", "dispatcher", "movecursor", str(x), str(y)], check=True)
 
 
 def on_key_press(window, event, *_):
@@ -57,9 +57,13 @@ def on_key_press(window, event, *_):
 
 if __name__ == "__main__":
 
-    window = Overlay()
+    horizontal_size = tk.Tk().winfo_screenwidth()
+    vertical_size = tk.Tk().winfo_screenheight()
+
+    window = Overlay(horizontal_size, vertical_size)
 
     window.set_opacity(0.5)
+    window.set_size_request(horizontal_size, vertical_size)
 
     window.set_keep_above(True)
 
