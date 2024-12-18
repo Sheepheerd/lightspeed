@@ -1,5 +1,5 @@
 # mousefree
-A mouse replacer for wayland
+A mouse replacer for wayland (purely a proof of concept - pre alpha)
 
 
 ## Getting Started
