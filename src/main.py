@@ -11,6 +11,8 @@ first_pass = True
 previous_location_x = None
 previous_location_y = None
 
+return_code = 0
+
 key_associations = {
     "q": (1, 3),
     "w": (3, 3),
@@ -27,8 +29,12 @@ key_associations = {
 }
 
 
-def click():
-    subprocess.run(["ydotool", "click", "0xC0"], check=True)
+# def click():
+#     thread = threading.Thread(
+#         target=lambda: subprocess.run(["ydotool", "click", "0xC0"], check=True)
+#     )
+#     thread.start()
+#     thread.join()  # Wait for the thread to finish
 
 
 def move_mouse(x, y):
@@ -39,11 +45,11 @@ def on_key_press(window, event, *_):
     global first_key, second_key  # Ensure we're using global variables
     global previous_location_x, previous_location_y  # Ensure we're using global variables
     global first_pass
+    global return_code
 
     if event.keyval == Gdk.KEY_Escape:
         print("Quitting")
-        exit()
-
+        app.quit()
     if first_key is None:
         first_key = event.keyval
         print(f"First key pressed: {chr(first_key)}")
@@ -61,7 +67,8 @@ def on_key_press(window, event, *_):
                 previous_location_x + (x * m_x),
                 previous_location_y + (y * m_y),
             )
-            exit()
+            return_code = 2
+            app.quit()
 
     if second_key is None:
         second_key = event.keyval
@@ -98,3 +105,4 @@ if __name__ == "__main__":
 
     app = Application("default", window)
     app.run()
+    exit(return_code)
