@@ -61,7 +61,7 @@ def on_key_press(window, event, *_):
                 previous_location_x + (x * m_x),
                 previous_location_y + (y * m_y),
             )
-            click()
+            exit()
 
     if second_key is None:
         second_key = event.keyval
@@ -93,11 +93,6 @@ if __name__ == "__main__":
     window = Overlay(horizontal_size, vertical_size)
     window.set_opacity(0.5)
     # window.set_size_request(horizontal_size, vertical_size)
-
-    window.set_keep_above(False)
-
-    # window.set_can_focus(False)
-    window.set_can_focus(True)
 
     window.connect("key-press-event", on_key_press)
 

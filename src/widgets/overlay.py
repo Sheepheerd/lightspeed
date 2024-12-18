@@ -6,10 +6,11 @@ from fabric.widgets.label import Label
 class Overlay(Window):
     def __init__(self, horizontal: int, verticle: int, **kwargs):
         super().__init__(
-            layer="overlay",
+            layer="top",
             anchor="bottom",
             exclusivity="normal",
             keyboard_mode="exclusive",
+            pass_through=True,
             **kwargs,
         )
 
