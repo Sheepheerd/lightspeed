@@ -1,56 +1,33 @@
-from fabric.widgets.box import Box
 from fabric.widgets.wayland import WaylandWindow as Window
-from widgets.double_letter_button import DoubleLetterButton
-
-
-def create_double_letter_buttons(horizontal_size, vertical_size):
-    """Create a 26x26 grid of buttons with labels 'aa' to 'zz'."""
-    buttons = []
-
-    # calculate the button width and height for rectangular buttons
-    horizontal = horizontal_size // 26 + 1
-    vertical = vertical_size // 26 + 1
-
-    for i in range(26):
-        for j in range(26):
-            label = f"{chr(97 + i)}{chr(97 + j)}"
-
-            buttons.append(
-                DoubleLetterButton(
-                    i * horizontal,
-                    j * vertical,
-                    label=label,
-                    size=[horizontal, vertical],
-                    on_clicked=lambda b, label=label, *_: b.set_label(
-                        f"Button {label}"
-                    ),
-                )
-            )
-
-    return buttons
+from fabric.widgets.fixed import Fixed
+from fabric.widgets.label import Label
 
 
 class Overlay(Window):
     def __init__(self, horizontal: int, verticle: int, **kwargs):
         super().__init__(
-            layer="top",
+            layer="overlay",
             anchor="bottom",
-            # exclusivity="none",
+            exclusivity="normal",
             keyboard_mode="exclusive",
             **kwargs,
         )
 
-        button_grid = create_double_letter_buttons(horizontal, verticle)
+        fixed = Fixed(size=[horizontal, verticle], h_align="center", v_align="center")
 
-        self.children = Box(
-            orientation="v",
-            children=[
-                Box(
-                    orientation="h",
-                    children=[
-                        Box(orientation="v", children=button_grid[i : i + 26])
-                        for i in range(0, len(button_grid), 26)
-                    ],
-                ),
-            ],
-        )
+        for i in range(26):
+            for j in range(26):
+                letters = f"{chr(97 + i)}{chr(97 + j)}"
+                label = Label(
+                    markup='<span font_desc="courier 20"><b>' + letters + "</b></span>",
+                    line_wape="word",
+                    justification="center",
+                    size=[horizontal // 26, verticle // 26],
+                    # size=[100, 100],
+                    ellipsization="end",
+                    # h_expand=True,
+                    # v_expand=True,
+                )
+                fixed.put(label, (horizontal // 26) * i, (verticle // 26) * j)
+
+        self.children = fixed

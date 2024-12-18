@@ -11,6 +11,8 @@
     pkgs.python312
     pkgs.python312Packages.virtualenv
     pkgs.gtk3
+    pkgs.libsForQt5.qt5.qtwayland
+    pkgs.python312Packages.pyqt5
     pkgs.gtk4
     pkgs.cairo
     pkgs.gtk-layer-shell
