@@ -29,14 +29,6 @@ key_associations = {
 }
 
 
-# def click():
-#     thread = threading.Thread(
-#         target=lambda: subprocess.run(["ydotool", "click", "0xC0"], check=True)
-#     )
-#     thread.start()
-#     thread.join()  # Wait for the thread to finish
-
-
 def move_mouse(x, y):
     subprocess.run(["hyprctl", "dispatcher", "movecursor", str(x), str(y)], check=True)
 
@@ -52,7 +44,6 @@ def on_key_press(window, event, *_):
         app.quit()
     if first_key is None:
         first_key = event.keyval
-        print(f"First key pressed: {chr(first_key)}")
 
         if first_pass:
             return
@@ -72,7 +63,6 @@ def on_key_press(window, event, *_):
 
     if second_key is None:
         second_key = event.keyval
-        print(f"Second key pressed: {chr(second_key)}")
 
     if first_pass:
         x, y = window.get_size()
@@ -99,7 +89,6 @@ if __name__ == "__main__":
 
     window = Overlay(horizontal_size, vertical_size)
     window.set_opacity(0.5)
-    # window.set_size_request(horizontal_size, vertical_size)
 
     window.connect("key-press-event", on_key_press)
 

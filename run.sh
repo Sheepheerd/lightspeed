@@ -4,9 +4,20 @@ SCRIPT_DIR=$(dirname "$0")
 
 VENV_DIR="$SCRIPT_DIR/venv"
 
+REQUIREMENTS_FILE="$SCRIPT_DIR/requirements.txt"
 if [ ! -d "$VENV_DIR" ]; then
     echo "Virtual environment not found. Creating it..."
     python -m venv "$VENV_DIR"
+
+    echo "Activating virtual environment..."
+    source "$VENV_DIR/bin/activate"
+    if [ -f "$REQUIREMENTS_FILE" ]; then
+      echo "Installing Python dependencies from requirements.txt..."
+      pip install -r "$REQUIREMENTS_FILE"
+    else
+      echo "Warning: requirements.txt not found, skipping dependency installation."
+    fi
+
     if [ $? -eq 0 ]; then
         echo "Virtual environment created successfully."
     else
@@ -15,18 +26,11 @@ if [ ! -d "$VENV_DIR" ]; then
     fi
 else
     echo "Virtual environment already exists."
+    echo "Activating virtual environment..."
+    source "$VENV_DIR/bin/activate"
 fi
 
-echo "Activating virtual environment..."
-source "$VENV_DIR/bin/activate"
 
-REQUIREMENTS_FILE="$SCRIPT_DIR/requirements.txt"
-if [ -f "$REQUIREMENTS_FILE" ]; then
-    echo "Installing Python dependencies from requirements.txt..."
-    pip install -r "$REQUIREMENTS_FILE"
-else
-    echo "Warning: requirements.txt not found, skipping dependency installation."
-fi
 
 PYTHON_SCRIPT="$SCRIPT_DIR/src/main.py"
 if [ ! -f "$PYTHON_SCRIPT" ]; then
