@@ -1,0 +1,8 @@
+[package]
+name = "mousefree"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gdk = "0.18.2"
+gtk = "0.18.2"

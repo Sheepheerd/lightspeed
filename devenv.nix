@@ -5,31 +5,16 @@
   env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  packages = [
+  packages = with pkgs; [
+    pkg-config
+    gtk3
+    glib
+    gtk4
 
-    pkgs.pylint
-    pkgs.python312
-    pkgs.python312Packages.virtualenv
-    pkgs.gtk3
-    pkgs.libsForQt5.qt5.qtwayland
-    pkgs.python312Packages.pyqt5
-    pkgs.gtk4
-    pkgs.cairo
-    pkgs.gtk-layer-shell
-    pkgs.gobject-introspection
-    # pkgs.python312Packages.pygobject3
-    pkgs.python312Packages.tkinter
-    pkgs.python312Packages.pycairo
-    pkgs.python312Packages.loguru
-    pkgs.python312Packages.pynput
-    pkgs.pkgconf
   ];
 
-  languages.python = {
+  languages.rust = {
     enable = true;
-
-    venv.enable = true;
-    venv.requirements = ./requirements.txt;
 
   };
 
@@ -39,11 +24,5 @@
   # '';
 
   # enterShell = "\n";
-
-  # https://devenv.sh/tests/
-  enterTest = ''
-    # echo "Running tests"
-    # git --version | grep --color=auto "${pkgs.git.version}"
-  '';
 
 }
