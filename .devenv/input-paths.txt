@@ -1,3 +1,0 @@
-/home/sheep/github/lightspeed/devenv.lock
-/home/sheep/github/lightspeed/devenv.nix
-/home/sheep/github/lightspeed/devenv.yaml
