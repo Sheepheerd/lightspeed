@@ -1,3 +1,3 @@
-/home/sheep/github/mousefree/devenv.lock
-/home/sheep/github/mousefree/devenv.nix
-/home/sheep/github/mousefree/devenv.yaml
+/home/sheep/github/lightspeed/devenv.lock
+/home/sheep/github/lightspeed/devenv.nix
+/home/sheep/github/lightspeed/devenv.yaml

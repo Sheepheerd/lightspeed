@@ -30,3 +30,38 @@ __pycache__
 .vscode/
 *.iml
 *.swp
+
+*.sw?
+.direnv
+.gopath
+/direnv
+/direnv.test
+/dist
+/test/config
+/test/data
+/test/scenarios/inherited/.envrc
+
+# for context: https://github.com/Homebrew/homebrew-bundle/pull/552
+Brewfile.lock.json
+
+# Nix & devenv
+result
+.env
+.env.*
+.devenv*
+.direnv*
+/.cache
+/.pre-commit-config.yaml
+man
+
+# mkdocs
+site/
+
+# examples
+examples/rust/app/target
+
+# Rust
+target
+
+# JavaScript
+/node_modules
