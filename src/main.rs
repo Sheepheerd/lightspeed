@@ -1,8 +1,13 @@
+use mouce::common::MouseButton;
+use mouce::{Mouse, MouseActions};
+use std::thread;
+use std::time::Duration;
+
 use gdk::EventKey;
 use gtk::prelude::*;
 use gtk::{glib, Application, ApplicationWindow};
 
-fn main() -> glib::ExitCode {
+fn main() {
     let app = Application::builder()
         .application_id("org.example.HelloWorld")
         .build();
@@ -28,5 +33,11 @@ fn main() -> glib::ExitCode {
         window.present();
     });
 
-    app.run()
+    app.run();
+
+    let mouse_manager = Mouse::new();
+    let _ = mouse_manager.move_to(1000, 1000);
+
+    thread::sleep(Duration::from_millis(2));
+    let _ = mouse_manager.click_button(&MouseButton::Left);
 }
