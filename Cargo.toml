@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-gdk = "0.18.2"
-gtk = "0.18.2"
+# gdk = "0.18.2"
+# gtk = "0.18.2"
+gtk = { version = "0.9.6", package = "gtk4", features = ["v4_12"] }
 mouce = {version = "0.2.51", default-features = false}
