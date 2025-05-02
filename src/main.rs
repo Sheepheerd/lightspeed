@@ -3,9 +3,8 @@ use mouce::{Mouse, MouseActions};
 use std::thread;
 use std::time::Duration;
 
-use gdk::EventKey;
 use gtk::prelude::*;
-use gtk::{glib, Application, ApplicationWindow};
+use gtk::{Application, ApplicationWindow, EventControllerKey};
 
 fn main() {
     let app = Application::builder()
@@ -13,24 +12,20 @@ fn main() {
         .build();
 
     app.connect_activate(|app| {
-        let window = gtk::ApplicationWindow::builder().application(app).build();
+        let window = ApplicationWindow::builder().application(app).build();
 
-        window.connect("key_press_event", false, |values| {
-            let raw_event = &values[1].get::<gdk::Event>().unwrap();
-            match raw_event.downcast_ref::<EventKey>() {
-                Some(event) => {
-                    println!("key value: {:?}", event.keyval());
-                    println!("modifiers: {:?}", event.state());
-                }
-                None => {}
-            }
+        let event_controller = EventControllerKey::new();
 
-            // Use a boolean type here, as returning a result for key press is necessary.
-            let result = glib::value::Value::from_type(bool::static_type());
-            Some(result)
+        event_controller.connect_key_pressed(|_ctrl, keyval, keycode, state| {
+            println!("key value: {:?}", keyval);
+            println!("keycode: {:?}", keycode);
+            println!("modifiers: {:?}", state);
+            false.into()
         });
+        window.add_controller(event_controller);
         window.set_resizable(false);
         window.present();
+        window.set_opacity(0.2f64);
     });
 
     app.run();

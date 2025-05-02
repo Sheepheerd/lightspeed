@@ -1,26 +1,30 @@
 {
-  description = "Dev shell with Rust, GTK3, GTK4, and friends";
+  description = "Dev shell with Rust and ra-multiplex";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
     flake-utils.url = "github:numtide/flake-utils";
+
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { self, nixpkgs, flake-utils, rust-overlay, ... }:
     flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import nixpkgs { inherit system; };
-      in {
-        devShells.default = pkgs.mkShell {
+      let
+        overlays = [ (import rust-overlay) ];
+        pkgs = import nixpkgs { inherit system overlays; };
 
-          buildInputs = with pkgs; [
-            pkg-config
-            gtk3
-            gtk4
-            glib
-            rustc
-            cargo
-            rustup
-          ];
-        };
+      in {
+        devShells.default = with pkgs;
+          mkShell {
+            buildInputs = [
+              pkg-config
+              gtk3
+              gtk4
+              glib
+              rust-bin.beta.latest.default
+              rust-analyzer
+            ];
+          };
       });
 }
