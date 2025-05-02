@@ -24,7 +24,11 @@
               glib
               rust-bin.beta.latest.default
               rust-analyzer
+              ra-multiplex
             ];
           };
+
+        shellHook = "";
+
       });
 }
