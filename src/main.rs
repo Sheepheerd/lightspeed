@@ -3,7 +3,7 @@ use gtk::{Application, ApplicationWindow, EventControllerKey};
 use mouce::{Mouse, MouseActions};
 
 fn main() {
-    let app = Application::builder().application_id("lightspeed").build();
+    let app = Application::builder().build();
 
     app.connect_activate(|app| {
         let window = ApplicationWindow::builder()
