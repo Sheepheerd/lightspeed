@@ -598,6 +598,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d750af042f7ef4f724306de029d18836c26c1765a54a6a3f094cbd23a7267ffa"
 
 [[package]]
+name = "lightspeed"
+version = "0.1.0"
+dependencies = [
+ "gdk",
+ "gtk4",
+ "mouce",
+]
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -620,15 +629,6 @@ checksum = "67bbbd75eec9f37d76663801d4c5664fc1f2fc1e8705f4ec7421a562b69b249f"
 dependencies = [
  "glob",
  "thiserror",
-]
-
-[[package]]
-name = "mousefree"
-version = "0.1.0"
-dependencies = [
- "gdk",
- "gtk4",
- "mouce",
 ]
 
 [[package]]
