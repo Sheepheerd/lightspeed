@@ -1,40 +1,72 @@
-use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow, EventControllerKey};
-use mouce::{Mouse, MouseActions};
+#![warn(clippy::all, rust_2018_idioms)]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
+// When compiling natively:
+#[cfg(not(target_arch = "wasm32"))]
+fn main() -> eframe::Result {
+    env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
+
+    let native_options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_inner_size([400.0, 300.0])
+            .with_min_inner_size([300.0, 220.0])
+            .with_icon(
+                // NOTE: Adding an icon is optional
+                eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon-256.png")[..])
+                    .expect("Failed to load icon"),
+            ),
+        ..Default::default()
+    };
+    eframe::run_native(
+        "eframe template",
+        native_options,
+        Box::new(|cc| Ok(Box::new(lightspeed::TemplateApp::new(cc)))),
+    )
+}
+
+// When compiling to web using trunk:
+#[cfg(target_arch = "wasm32")]
 fn main() {
-    let app = Application::builder().build();
+    use eframe::wasm_bindgen::JsCast as _;
 
-    app.connect_activate(|app| {
-        let window = ApplicationWindow::builder()
-            .application(app)
-            .default_width(1920)
-            .default_height(1080)
-            .title("lightspeed")
-            .build();
+    // Redirect `log` message to `console.log` and friends:
+    eframe::WebLogger::init(log::LevelFilter::Debug).ok();
 
-        let event_controller = EventControllerKey::new();
+    let web_options = eframe::WebOptions::default();
 
-        event_controller.connect_key_pressed(|_ctrl, keyval, keycode, state| {
-            println!("key value: {:?}", keyval);
-            println!("keycode: {:?}", keycode);
-            println!("modifiers: {:?}", state);
-            false.into()
-        });
-        window.add_controller(event_controller);
-        window.set_resizable(false);
-        // window.maximize();
-        window.set_decorated(false);
+    wasm_bindgen_futures::spawn_local(async {
+        let document = web_sys::window()
+            .expect("No window")
+            .document()
+            .expect("No document");
 
-        window.present();
-        window.set_opacity(0.2f64);
+        let canvas = document
+            .get_element_by_id("the_canvas_id")
+            .expect("Failed to find the_canvas_id")
+            .dyn_into::<web_sys::HtmlCanvasElement>()
+            .expect("the_canvas_id was not a HtmlCanvasElement");
+
+        let start_result = eframe::WebRunner::new()
+            .start(
+                canvas,
+                web_options,
+                Box::new(|cc| Ok(Box::new(lightspeed::TemplateApp::new(cc)))),
+            )
+            .await;
+
+        // Remove the loading text and spinner:
+        if let Some(loading_text) = document.get_element_by_id("loading_text") {
+            match start_result {
+                Ok(_) => {
+                    loading_text.remove();
+                }
+                Err(e) => {
+                    loading_text.set_inner_html(
+                        "<p> The app has crashed. See the developer console for details. </p>",
+                    );
+                    panic!("Failed to start eframe: {e:?}");
+                }
+            }
+        }
     });
-
-    app.run();
-
-    // let mouse_manager = Mouse::new();
-    // let _ = mouse_manager.move_to(1000, 1000);
-    //
-    // thread::sleep(Duration::from_millis(2));
-    // let _ = mouse_manager.click_button(&MouseButton::Left);
 }

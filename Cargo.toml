@@ -1,11 +1,53 @@
 [package]
 name = "lightspeed"
 version = "0.1.0"
+authors = ["Shepard Garrett <sg>"]
 edition = "2021"
+include = ["LICENSE", "**/*.rs", "Cargo.toml"]
+rust-version = "1.81"
+
+[package.metadata.docs.rs]
+all-features = true
+targets = ["x86_64-unknown-linux-gnu", "aarch64-unknown-unknown"]
 
 [dependencies]
-gdk = "0.18.2"
-# gdk = "0.18.2"
-# gtk = "0.18.2"
-gtk = { version = "0.9.6", package = "gtk4", features = ["v4_12"] }
-mouce = {version = "0.2.51", default-features = false}
+egui = "0.31"
+eframe = { version = "0.31", default-features = false, features = [
+    "accesskit",     # Make egui compatible with screen readers. NOTE: adds a lot of dependencies.
+    "default_fonts", # Embed the default egui fonts.
+    "glow",          # Use the glow rendering backend. Alternative: "wgpu".
+    "persistence",   # Enable restoring app state when restarting the app.
+    "wayland",       # To support Linux (and CI)
+    "x11",           # To support older Linux distributions (restores one of the default features)
+] }
+log = "0.4.27"
+
+# You only need serde if you want app persistence:
+serde = { version = "1.0.219", features = ["derive"] }
+
+# native:
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+env_logger = "0.11.8"
+
+# web:
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen-futures = "0.4.50"
+web-sys = "0.3.70"              # to access the DOM (to hide the loading text)
+
+[profile.release]
+opt-level = 2 # fast and small wasm
+
+# Optimize all dependencies even in debug builds:
+[profile.dev.package."*"]
+opt-level = 2
+
+
+[patch.crates-io]
+
+# If you want to use the bleeding edge version of egui and eframe:
+# egui = { git = "https://github.com/emilk/egui", branch = "master" }
+# eframe = { git = "https://github.com/emilk/egui", branch = "master" }
+
+# If you fork https://github.com/emilk/egui you can test with:
+# egui = { path = "../egui/crates/egui" }
+# eframe = { path = "../egui/crates/eframe" }

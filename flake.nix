@@ -1,34 +1,45 @@
 {
-  description = "Dev shell with Rust and ra-multiplex";
+  description = "eframe devShell";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     rust-overlay.url = "github:oxalica/rust-overlay";
     flake-utils.url = "github:numtide/flake-utils";
-
   };
 
-  outputs = { self, nixpkgs, flake-utils, rust-overlay, ... }:
+  outputs = { self, nixpkgs, rust-overlay, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs { inherit system overlays; };
+      in with pkgs; {
+        devShells.default = mkShell rec {
+          buildInputs = [
+            # Rust
+            rust-bin.stable.latest.default
+            trunk
 
-      in {
-        devShells.default = with pkgs;
-          mkShell {
-            buildInputs = [
-              pkg-config
-              gtk3
-              gtk4
-              glib
-              rust-bin.beta.latest.default
-              rust-analyzer
-              ra-multiplex
-            ];
-          };
+            # misc. libraries
+            openssl
+            pkg-config
 
-        shellHook = "";
+            # GUI libs
+            libxkbcommon
+            libGL
+            fontconfig
 
+            # wayland libraries
+            wayland
+
+            # x11 libraries
+            xorg.libXcursor
+            xorg.libXrandr
+            xorg.libXi
+            xorg.libX11
+
+          ];
+
+          LD_LIBRARY_PATH = "${lib.makeLibraryPath buildInputs}";
+        };
       });
 }
