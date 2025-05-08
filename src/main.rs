@@ -1,40 +1,63 @@
+use gtk::gdk::prelude::*;
+use gtk::glib::ExitCode;
 use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow, EventControllerKey};
+use gtk::{gdk, AlertDialog};
+
+use gtk::{Application, ApplicationWindow, EventControllerKey, MessageDialog, MessageType};
 use mouce::{Mouse, MouseActions};
+// use gtk::gdk;
 
 fn main() {
     let app = Application::builder().application_id("lightspeed").build();
 
     app.connect_activate(|app| {
+        let mut width = 0;
+        let mut height = 0;
+        if let Some(display) = gdk::Display::default() {
+            let monitors = display.monitors();
+            let mut monitor_count = 0;
+            for i in 0..monitors.n_items() {
+                if let Some(monitor) = monitors
+                    .item(i)
+                    .and_then(|obj| obj.downcast::<gdk::Monitor>().ok())
+                {
+                    monitor_count += 1;
+                    let geometry = monitor.geometry();
+                    width = geometry.width();
+                    height = geometry.height();
+                }
+            }
+            if monitor_count > 1 {
+                println!("\x1b[31mWAY TO MANY MONITORS MAN!\x1b[0m");
+                app.quit();
+                return;
+            }
+        }
+
+        println!("Final selected monitor size: {}x{}", width, height);
+
         let window = ApplicationWindow::builder()
+            .default_height(height)
+            .default_width(width)
             .application(app)
-            .default_width(1920)
-            .default_height(1080)
             .title("lightspeed")
+            .maximized(true)
             .build();
 
         let event_controller = EventControllerKey::new();
-
         event_controller.connect_key_pressed(|_ctrl, keyval, keycode, state| {
             println!("key value: {:?}", keyval);
             println!("keycode: {:?}", keycode);
             println!("modifiers: {:?}", state);
             false.into()
         });
+
         window.add_controller(event_controller);
         window.set_resizable(false);
-        // window.maximize();
         window.set_decorated(false);
-
         window.present();
-        window.set_opacity(0.2f64);
+        window.set_opacity(0.2);
     });
 
     app.run();
-
-    // let mouse_manager = Mouse::new();
-    // let _ = mouse_manager.move_to(1000, 1000);
-    //
-    // thread::sleep(Duration::from_millis(2));
-    // let _ = mouse_manager.click_button(&MouseButton::Left);
 }
