@@ -1,9 +1,8 @@
+use gtk::gdk;
 use gtk::gdk::prelude::*;
-use gtk::glib::ExitCode;
 use gtk::prelude::*;
-use gtk::{gdk, AlertDialog};
 
-use gtk::{Application, ApplicationWindow, EventControllerKey, MessageDialog, MessageType};
+use gtk::{Application, ApplicationWindow, EventControllerKey};
 use mouce::{Mouse, MouseActions};
 // use gtk::gdk;
 
@@ -34,14 +33,15 @@ fn main() {
             }
         }
 
-        println!("Final selected monitor size: {}x{}", width, height);
-
         let window = ApplicationWindow::builder()
             .default_height(height)
             .default_width(width)
             .application(app)
             .title("lightspeed")
+            .decorated(false)
+            .resizable(false)
             .maximized(true)
+            .opacity(0.2)
             .build();
 
         let event_controller = EventControllerKey::new();
@@ -53,10 +53,7 @@ fn main() {
         });
 
         window.add_controller(event_controller);
-        window.set_resizable(false);
-        window.set_decorated(false);
         window.present();
-        window.set_opacity(0.2);
     });
 
     app.run();
