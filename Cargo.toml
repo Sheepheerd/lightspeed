@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 gdk4-wayland = {version = "0.9.6", features = ["wayland_crate"]}
+glib = "0.20.9"
 # gdk = "0.18.2"
 # gtk = "0.18.2"
 gtk = { version = "0.9.6", package = "gtk4", features = ["v4_12"] }

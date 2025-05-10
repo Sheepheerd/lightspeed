@@ -489,6 +489,7 @@ name = "lightspeed"
 version = "0.1.0"
 dependencies = [
  "gdk4-wayland",
+ "glib",
  "gtk4",
  "mouce",
 ]
