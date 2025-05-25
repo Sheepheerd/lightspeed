@@ -6,13 +6,12 @@
 
 ### Pre-requisites
 
-- gtk3
-- glib
-- gtk4
-- pkg-config
+- just use nix
 
 ## How Does it Work
 
 rust
 
 ## Demonstration
+
+not finished. gtk-rs >:(
