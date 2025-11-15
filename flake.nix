@@ -1,5 +1,5 @@
 {
-  description = "Dev shell with Rust and ra-multiplex";
+  description = "Dev shell with Rust";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -8,14 +8,23 @@
 
   };
 
-  outputs = { self, nixpkgs, flake-utils, rust-overlay, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      nixpkgs,
+      flake-utils,
+      rust-overlay,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs { inherit system overlays; };
 
-      in {
-        devShells.default = with pkgs;
+      in
+      {
+        devShells.default =
+          with pkgs;
           mkShell {
             buildInputs = [
               pkg-config
@@ -24,11 +33,11 @@
               glib
               rust-bin.beta.latest.default
               rust-analyzer
-              ra-multiplex
             ];
           };
 
         shellHook = "";
 
-      });
+      }
+    );
 }
